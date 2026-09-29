@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="siteHeader"></div>
+<main>
+  <section class="page-hero">
+    <span class="eyebrow">THE COLLECTION</span>
+    <h1>Shop the <em>drop.</em></h1>
+    <p>Premium essentials. Carefully selected. Nothing unnecessary.</p>
+  </section>
+
+  <section class="shop-layout">
+    <aside class="filters">
+      <div class="filter-title">FILTERS <button id="clearFilters">Clear</button></div>
+      <label>Search<input id="searchInput" type="search" placeholder="Search products..."></label>
+      <label>Category<select id="categoryFilter"><option value="all">All</option><option>Sneakers</option><option>Audio</option><option>Accessories</option><option>Apparel</option></select></label>
+      <label>Price<select id="priceFilter"><option value="all">Any price</option><option value="under2000">Under ₹2,000</option><option value="2000-5000">₹2,000 – ₹5,000</option><option value="over5000">Above ₹5,000</option></select></label>
+    </aside>
+    <div class="shop-results">
+      <div class="shop-toolbar"><span id="resultCount">0 products</span><select id="sortFilter"><option value="featured">Sort: Featured</option><option value="low">Price: Low → High</option><option value="high">Price: High → Low</option><option value="rating">Top rated</option></select></div>
+      <div id="productGrid" class="product-grid"></div>
+    </div>
+  </section>
+</main>
+<div id="siteFooter"></div><div id="toast"></div>
+<script src="js/products.js"></script><script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product — Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="siteHeader"></div>
+<main id="productPage"></main>
+<div id="siteFooter"></div><div id="toast"></div>
+<script src="js/products.js"></script><script src="js/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const id = Number(new URLSearchParams(location.search).get("id"));
+  const product = products.find(p => p.id === id);
+  const root = document.getElementById("productPage");
+  if (!product) { root.innerHTML = '<section class="not-found"><h1>Product not found.</h1><a class="btn btn-dark" href="products.html">Back to shop</a></section>'; return; }
+
+  const gallery = [product.image, product.image2, product.image3];
+  root.innerHTML = `
+    <section class="product-detail">
+      <div class="product-gallery">
+        <div class="thumbs">${gallery.map((img,i)=>`<button class="thumb ${i===0?'active':''}" data-img="${img}"><img src="${img}" alt=""></button>`).join("")}</div>
+        <div class="main-product-image"><img id="mainProductImage" src="${product.image}" alt="${product.name}"></div>
+      </div>
+      <div class="product-info">
+        <span class="eyebrow">${product.category} / ${product.code}</span>
+        <h1>${product.name}</h1>
+        <div class="rating-line"><span>★★★★★</span> ${product.rating} · ${product.reviews} reviews</div>
+        <div class="big-price">₹${product.price.toLocaleString()} <del>₹${product.oldPrice.toLocaleString()}</del></div>
+        <p class="lead">${product.description}</p>
+        <div class="option-group"><b>Color</b><div class="swatches">${product.colors.map((c,i)=>`<button class="swatch ${i===0?'selected':''}" style="background:${c}" aria-label="Color ${i+1}"></button>`).join("")}</div></div>
+        ${product.sizes.length ? `<div class="option-group"><b>Size</b><div class="sizes">${product.sizes.map((s,i)=>`<button class="size ${i===0?'selected':''}">${s}</button>`).join("")}</div></div>` : ""}
+        <div class="purchase-row"><div class="qty"><button id="minus">−</button><span id="qty">1</span><button id="plus">+</button></div><button class="btn btn-dark add-detail">Add to bag <span>↗</span></button></div>
+        <div class="product-perks"><div><b>Free shipping</b><span>Orders over ₹1,999</span></div><div><b>30-day returns</b><span>Easy & simple</span></div><div><b>Secure payment</b><span>100% protected</span></div></div>
+      </div>
+    </section>
+    <section class="product-story"><span class="eyebrow">PRODUCT DETAILS</span><h2>Designed for the everyday.</h2><p>${product.details}</p></section>
+    <section class="section"><div class="section-head"><div><span class="eyebrow">YOU MAY ALSO LIKE</span><h2>More to explore.</h2></div></div><div class="product-grid" id="relatedGrid"></div></section>`;
+  let qty=1;
+  document.getElementById("plus").onclick=()=>{qty++;document.getElementById("qty").textContent=qty};
+  document.getElementById("minus").onclick=()=>{if(qty>1)qty--;document.getElementById("qty").textContent=qty};
+  document.querySelectorAll(".thumb").forEach(t=>t.onclick=()=>{document.querySelectorAll(".thumb").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById("mainProductImage").src=t.dataset.img});
+  document.querySelectorAll(".size").forEach(b=>b.onclick=()=>{document.querySelectorAll(".size").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
+  document.querySelectorAll(".swatch").forEach(b=>b.onclick=()=>{document.querySelectorAll(".swatch").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
+  document.querySelector(".add-detail").onclick=()=>addToCart(product.id,qty);
+  const related=products.filter(p=>p.category===product.category && p.id!==product.id).slice(0,4);
+  document.getElementById("relatedGrid").innerHTML=related.map(productCard).join("");
+});
+</script>
+</body>
+</html>

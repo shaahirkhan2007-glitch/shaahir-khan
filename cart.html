@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Bag — Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="siteHeader"></div>
+<main>
+  <section class="page-hero compact"><span class="eyebrow">YOUR SELECTION</span><h1>Your <em>bag.</em></h1></section>
+  <section class="cart-layout">
+    <div id="cartItems"></div>
+    <aside class="summary-card"><span class="eyebrow">SUMMARY</span><h2>Order total</h2><div class="sum-row"><span>Subtotal</span><b id="subtotal">₹0</b></div><div class="sum-row"><span>Shipping</span><b id="shipping">Free</b></div><div class="sum-row total"><span>Total</span><b id="total">₹0</b></div><a id="checkoutBtn" class="btn btn-dark full" href="checkout.html">Continue to checkout ↗</a><a class="back-link" href="products.html">← Continue shopping</a></aside>
+  </section>
+</main>
+<div id="siteFooter"></div><div id="toast"></div>
+<script src="js/products.js"></script><script src="js/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", renderCartPage);
+function renderCartPage(){
+  const root=document.getElementById("cartItems"), cart=getCart();
+  if(!cart.length){root.innerHTML='<div class="empty-state"><div class="empty-icon">○</div><h2>Your bag is empty.</h2><p>Find something worth taking home.</p><a class="btn btn-dark" href="products.html">Shop now ↗</a></div>'; updateSummary(); return;}
+  root.innerHTML=cart.map(item=>{
+    const p=products.find(x=>x.id===item.id); if(!p)return "";
+    return `<article class="cart-row"><a href="product.html?id=${p.id}" class="cart-img"><img src="${p.image}" alt="${p.name}"></a><div class="cart-meta"><span>${p.category}</span><h3>${p.name}</h3><b>₹${p.price.toLocaleString()}</b></div><div class="qty"><button onclick="changeQty(${p.id},-1)">−</button><span>${item.quantity}</span><button onclick="changeQty(${p.id},1)">+</button></div><b class="cart-line-total">₹${(p.price*item.quantity).toLocaleString()}</b><button class="remove" onclick="removeFromCart(${p.id})">×</button></article>`;
+  }).join("");
+  updateSummary();
+}
+function updateSummary(){
+  const cart=getCart(); let subtotal=0;
+  cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(p)subtotal+=p.price*i.quantity});
+  const shipping=subtotal===0||subtotal>=1999?0:99, total=subtotal+shipping;
+  document.getElementById("subtotal").textContent=`₹${subtotal.toLocaleString()}`;
+  document.getElementById("shipping").textContent=shipping?"₹99":"Free";
+  document.getElementById("total").textContent=`₹${total.toLocaleString()}`;
+  document.getElementById("checkoutBtn").style.pointerEvents=cart.length?"auto":"none";
+  document.getElementById("checkoutBtn").style.opacity=cart.length?"1":".45";
+}
+function changeQty(id,d){const c=getCart(),i=c.find(x=>x.id===id);if(!i)return;i.quantity+=d;if(i.quantity<1)c.splice(c.indexOf(i),1);saveCart(c);updateCartCount();renderCartPage()}
+function removeFromCart(id){saveCart(getCart().filter(x=>x.id!==id));updateCartCount();renderCartPage();showToast("Removed from bag")}
+</script>
+</body>
+</html>
